@@ -6,6 +6,7 @@ module.exports = {
   playlistType: 'VOD',
   segments: [
     {
+      playlistDuration: 0,
       duration: 0.01,
       timeline: 0,
       uri: 'http://example.com/00001.ts'

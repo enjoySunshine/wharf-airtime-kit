@@ -9,6 +9,7 @@ module.exports = {
   mediaSequence: 266,
   preloadSegment: {
     timeline: 0,
+    programDateTime: 1550110444106.08,
     preloadHints: [
       {type: 'PART', uri: 'filePart273.4.mp4'},
       {type: 'MAP', uri: 'file-init.mp4'}

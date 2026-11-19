@@ -12,6 +12,9 @@
     "uuid": "^11.1.1"
   },
   "scripts": {
+    "build:board": "node scripts/build-board.mjs",
+    "verify:airtime": "node scripts/verify-airtime.mjs",
+    "test:offline": "node scripts/offline/run-tests.mjs",
     "build-test": "cross-env-shell TEST_BUNDLE_ONLY=1 'npm run build'",
     "build-prod": "cross-env-shell NO_TEST_BUNDLE=1 'npm run build'",
     "build": "npm-run-all -s clean -p build:*",

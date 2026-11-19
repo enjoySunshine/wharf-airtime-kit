@@ -28,7 +28,8 @@ module.exports = {
       {type: 'PART', uri: 'filePart273.3.mp4'},
       {type: 'MAP', uri: 'file-init.mp4'}
     ],
-    timeline: 0
+    timeline: 0,
+    programDateTime: 1550110444106.08
   },
   renditionReports: [
     {lastMsn: 273, lastPart: 2, uri: '../1M/waitForMSN.php'},

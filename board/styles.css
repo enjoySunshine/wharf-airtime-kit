@@ -1,0 +1,227 @@
+:root {
+  --bg: #0b0e14;
+  --panel: #12161f;
+  --line: #232a38;
+  --text: #d7dee9;
+  --dim: #7c8698;
+  --bar: #2f81f7;
+  --bar-edge: #58a6ff;
+  --clock-a: rgba(47, 129, 247, 0.09);
+  --clock-b: rgba(63, 185, 80, 0.09);
+  --cut: #f85149;
+  --anchor: #f2cc60;
+  --time: #79c0ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "SF Mono", "Cascadia Mono", Consolas, "Courier New", monospace;
+  font-size: 13px;
+}
+
+header {
+  padding: 18px 22px 4px;
+}
+
+h1 {
+  font-size: 18px;
+  margin: 0 0 6px;
+}
+
+.source {
+  color: var(--dim);
+  margin: 0 0 10px;
+}
+
+.legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  display: inline-flex;
+  width: 18px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+}
+
+.swatch-anchor {
+  color: var(--anchor);
+}
+
+.swatch-cut {
+  color: var(--cut);
+}
+
+.swatch-preload {
+  border: 1px dashed var(--bar-edge);
+  border-radius: 2px;
+}
+
+.swatch-filler {
+  background: var(--anchor);
+  width: 6px;
+}
+
+.swatch-blank {
+  border-bottom: 1px dashed var(--dim);
+}
+
+.feed {
+  margin: 14px 22px 26px;
+  padding: 14px 16px 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.feed h2 {
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+
+.feed-meta,
+.feed-note {
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.feed-note {
+  margin-bottom: 12px;
+}
+
+.lane {
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.group {
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  padding: 22px 8px 8px;
+  border-radius: 6px;
+}
+
+.clock-a {
+  background: var(--clock-a);
+}
+
+.clock-b {
+  background: var(--clock-b);
+}
+
+.clock-tag {
+  position: absolute;
+  top: 4px;
+  left: 10px;
+  color: var(--dim);
+  font-size: 11px;
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 6px;
+}
+
+.seg-index {
+  color: var(--dim);
+  font-size: 11px;
+}
+
+.bar {
+  height: 44px;
+  position: relative;
+  background: linear-gradient(180deg, var(--bar-edge), var(--bar));
+  border-radius: 3px;
+}
+
+.bar.preload {
+  background: rgba(88, 166, 255, 0.12);
+  border: 1px dashed var(--bar-edge);
+}
+
+.bar.filler {
+  background: var(--anchor);
+}
+
+.anchor {
+  position: absolute;
+  top: -17px;
+  left: 0;
+  color: var(--anchor);
+  font-size: 12px;
+}
+
+.seg-name {
+  white-space: nowrap;
+}
+
+.seg-dur {
+  color: var(--dim);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.seg-time {
+  min-height: 32px;
+  white-space: nowrap;
+}
+
+.seg-time .date {
+  display: block;
+  color: var(--dim);
+  font-size: 11px;
+}
+
+.seg-time .clock {
+  display: block;
+  color: var(--time);
+  font-weight: 600;
+}
+
+.cut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 8px;
+  padding: 0 8px;
+  border-left: 2px dashed var(--cut);
+  border-right: 2px dashed var(--cut);
+  color: var(--cut);
+}
+
+.cut-icon {
+  font-size: 18px;
+}
+
+.cut-label {
+  writing-mode: vertical-rl;
+  font-size: 10px;
+  letter-spacing: 1px;
+}

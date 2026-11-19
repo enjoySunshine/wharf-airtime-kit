@@ -1,0 +1,496 @@
+{
+  "generatedAt": "2026-11-19T01:55:49.146Z",
+  "feeds": [
+    {
+      "id": "01-first-half",
+      "title": "上半场 · 连续三段",
+      "note": "EXT-X-DISCONTINUITY-SEQUENCE:3 只是序号接着计，不切钟；三段沿同一条钟顺推。",
+      "source": "playlists/01-first-half.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "dateTimeString": "2024-03-01T12:00:00.000Z",
+            "dateTimeObject": "2024-03-01T12:00:00.000Z",
+            "duration": 10,
+            "uri": "first-half-0042.ts",
+            "timeline": 3,
+            "programDateTime": 1709294400000
+          },
+          {
+            "duration": 10,
+            "uri": "first-half-0043.ts",
+            "timeline": 3,
+            "programDateTime": 1709294410000
+          },
+          {
+            "duration": 4,
+            "uri": "first-half-0044.ts",
+            "timeline": 3,
+            "programDateTime": 1709294420000
+          }
+        ],
+        "version": 3,
+        "targetDuration": 10,
+        "mediaSequence": 42,
+        "discontinuitySequence": 3,
+        "dateTimeString": "2024-03-01T12:00:00.000Z",
+        "dateTimeObject": "2024-03-01T12:00:00.000Z",
+        "endList": true
+      }
+    },
+    {
+      "id": "02-halftime-cut",
+      "title": "中场一刀 · 刀后无新标签",
+      "note": "EXT-X-DISCONTINUITY 之后没有新的绝对时间标签：刀后两段留空，刀前的钟停在刀前最后一段。",
+      "source": "playlists/02-halftime-cut.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [
+          2
+        ],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "dateTimeString": "2024-03-01T12:00:00.000Z",
+            "dateTimeObject": "2024-03-01T12:00:00.000Z",
+            "duration": 10,
+            "uri": "home-0107.ts",
+            "timeline": 0,
+            "programDateTime": 1709294400000
+          },
+          {
+            "duration": 10,
+            "uri": "home-0108.ts",
+            "timeline": 0,
+            "programDateTime": 1709294410000
+          },
+          {
+            "discontinuity": true,
+            "duration": 10,
+            "uri": "away-0001.ts",
+            "timeline": 1
+          },
+          {
+            "duration": 5,
+            "uri": "away-0002.ts",
+            "timeline": 1
+          }
+        ],
+        "version": 3,
+        "targetDuration": 10,
+        "mediaSequence": 107,
+        "dateTimeString": "2024-03-01T12:00:00.000Z",
+        "dateTimeObject": "2024-03-01T12:00:00.000Z",
+        "discontinuitySequence": 0,
+        "endList": true
+      }
+    },
+    {
+      "id": "03-tag-after-cut",
+      "title": "另一场 · 标签在刀后第一段",
+      "note": "刀前两段留空（不跨刀倒推）；刀后从标签写下的 18:00:00.000 起走。",
+      "source": "playlists/03-tag-after-cut.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [
+          2
+        ],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "duration": 10,
+            "uri": "studio-0220.ts",
+            "timeline": 0
+          },
+          {
+            "duration": 6,
+            "uri": "studio-0221.ts",
+            "timeline": 0
+          },
+          {
+            "discontinuity": true,
+            "dateTimeString": "2024-03-01T18:00:00.000Z",
+            "dateTimeObject": "2024-03-01T18:00:00.000Z",
+            "duration": 10,
+            "uri": "venue-0001.ts",
+            "timeline": 1,
+            "programDateTime": 1709316000000
+          },
+          {
+            "duration": 4,
+            "uri": "venue-0002.ts",
+            "timeline": 1,
+            "programDateTime": 1709316010000
+          }
+        ],
+        "version": 3,
+        "targetDuration": 10,
+        "mediaSequence": 220,
+        "discontinuitySequence": 0,
+        "dateTimeString": "2024-03-01T18:00:00.000Z",
+        "dateTimeObject": "2024-03-01T18:00:00.000Z",
+        "endList": true
+      }
+    },
+    {
+      "id": "04-tag-on-second-after-cut",
+      "title": "标签在刀后第二段",
+      "note": "刀前一段留空；刀后 8 秒段与锚点同一条钟，倒推为 17:59:52.000。",
+      "source": "playlists/04-tag-on-second-after-cut.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [
+          1
+        ],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "duration": 10,
+            "uri": "studio-0305.ts",
+            "timeline": 0
+          },
+          {
+            "discontinuity": true,
+            "duration": 8,
+            "uri": "venue-0001.ts",
+            "timeline": 1,
+            "programDateTime": 1709315992000
+          },
+          {
+            "dateTimeString": "2024-03-01T18:00:00.000Z",
+            "dateTimeObject": "2024-03-01T18:00:00.000Z",
+            "duration": 10,
+            "uri": "venue-0002.ts",
+            "timeline": 1,
+            "programDateTime": 1709316000000
+          },
+          {
+            "duration": 4,
+            "uri": "venue-0003.ts",
+            "timeline": 1,
+            "programDateTime": 1709316010000
+          }
+        ],
+        "version": 3,
+        "targetDuration": 10,
+        "mediaSequence": 305,
+        "discontinuitySequence": 0,
+        "dateTimeString": "2024-03-01T18:00:00.000Z",
+        "dateTimeObject": "2024-03-01T18:00:00.000Z",
+        "endList": true
+      }
+    },
+    {
+      "id": "05-tag-before-cut",
+      "title": "标签紧挨切换标记前",
+      "note": "标签落在刀后第一段上：刀前一段留空，刀后从 18:00:00.000 起走。",
+      "source": "playlists/05-tag-before-cut.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [
+          1
+        ],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "duration": 10,
+            "uri": "studio-0409.ts",
+            "timeline": 0
+          },
+          {
+            "dateTimeString": "2024-03-01T18:00:00.000Z",
+            "dateTimeObject": "2024-03-01T18:00:00.000Z",
+            "discontinuity": true,
+            "duration": 10,
+            "uri": "venue-0001.ts",
+            "timeline": 1,
+            "programDateTime": 1709316000000
+          },
+          {
+            "duration": 4,
+            "uri": "venue-0002.ts",
+            "timeline": 1,
+            "programDateTime": 1709316010000
+          }
+        ],
+        "version": 3,
+        "targetDuration": 10,
+        "mediaSequence": 409,
+        "discontinuitySequence": 0,
+        "dateTimeString": "2024-03-01T18:00:00.000Z",
+        "dateTimeObject": "2024-03-01T18:00:00.000Z",
+        "endList": true
+      }
+    },
+    {
+      "id": "06-zero-filler-forward",
+      "title": "垫片 EXTINF 0 · 顺推",
+      "note": "绝对时间按播放列表写下的 0 秒走，垫片后一段不晚 10 毫秒；播放器拿到的时长仍是 0.01 秒。",
+      "source": "playlists/06-zero-filler-forward.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "dateTimeString": "2024-03-01T12:00:00.000Z",
+            "dateTimeObject": "2024-03-01T12:00:00.000Z",
+            "duration": 10,
+            "uri": "main-0510.ts",
+            "timeline": 0,
+            "programDateTime": 1709294400000
+          },
+          {
+            "playlistDuration": 0,
+            "duration": 0.01,
+            "uri": "filler-0511.ts",
+            "timeline": 0,
+            "programDateTime": 1709294410000
+          },
+          {
+            "duration": 10,
+            "uri": "main-0512.ts",
+            "timeline": 0,
+            "programDateTime": 1709294410000
+          }
+        ],
+        "version": 3,
+        "targetDuration": 10,
+        "mediaSequence": 510,
+        "dateTimeString": "2024-03-01T12:00:00.000Z",
+        "dateTimeObject": "2024-03-01T12:00:00.000Z",
+        "discontinuitySequence": 0,
+        "endList": true
+      }
+    },
+    {
+      "id": "07-zero-filler-backfill",
+      "title": "垫片 EXTINF 0 · 倒着补",
+      "note": "0 秒垫片不占时间，与后一段同刻 12:00:10.000；播放器拿到的时长仍是 0.01 秒。",
+      "source": "playlists/07-zero-filler-backfill.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "playlistDuration": 0,
+            "duration": 0.01,
+            "uri": "filler-0620.ts",
+            "timeline": 0,
+            "programDateTime": 1709294410000
+          },
+          {
+            "dateTimeString": "2024-03-01T12:00:10.000Z",
+            "dateTimeObject": "2024-03-01T12:00:10.000Z",
+            "duration": 10,
+            "uri": "main-0621.ts",
+            "timeline": 0,
+            "programDateTime": 1709294410000
+          }
+        ],
+        "version": 3,
+        "targetDuration": 10,
+        "mediaSequence": 620,
+        "discontinuitySequence": 0,
+        "dateTimeString": "2024-03-01T12:00:10.000Z",
+        "dateTimeObject": "2024-03-01T12:00:10.000Z",
+        "endList": true
+      }
+    },
+    {
+      "id": "08-live-parts-same-timeline",
+      "title": "直播末尾 · 仅 EXT-X-PART（同一条钟）",
+      "note": "地址还没写出来的最后一段与前一段同一条钟，必须带上自己的绝对时间 12:00:04.000。",
+      "source": "playlists/08-live-parts-same-timeline.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "dateTimeString": "2024-03-01T12:00:00.000Z",
+            "dateTimeObject": "2024-03-01T12:00:00.000Z",
+            "duration": 4,
+            "uri": "live-0730.ts",
+            "timeline": 0,
+            "programDateTime": 1709294400000
+          }
+        ],
+        "version": 9,
+        "targetDuration": 4,
+        "mediaSequence": 730,
+        "partInf": {
+          "partTarget": 1
+        },
+        "partTargetDuration": 1,
+        "serverControl": {
+          "partHoldBack": 3,
+          "canBlockReload": true,
+          "holdBack": 12
+        },
+        "dateTimeString": "2024-03-01T12:00:00.000Z",
+        "dateTimeObject": "2024-03-01T12:00:00.000Z",
+        "discontinuitySequence": 0,
+        "preloadSegment": {
+          "parts": [
+            {
+              "duration": 1
+            },
+            {
+              "duration": 1
+            }
+          ],
+          "timeline": 0,
+          "programDateTime": 1709294404000
+        }
+      }
+    },
+    {
+      "id": "09-live-parts-after-cut",
+      "title": "先切信号 · 仅 EXT-X-PART",
+      "note": "先切了信号、新的绝对时间还没出现，末尾只有 part 的段留空。",
+      "source": "playlists/09-live-parts-after-cut.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [
+          1
+        ],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "dateTimeString": "2024-03-01T12:00:00.000Z",
+            "dateTimeObject": "2024-03-01T12:00:00.000Z",
+            "duration": 10,
+            "uri": "home-0840.ts",
+            "timeline": 0,
+            "programDateTime": 1709294400000
+          }
+        ],
+        "version": 9,
+        "targetDuration": 10,
+        "mediaSequence": 840,
+        "partInf": {
+          "partTarget": 1
+        },
+        "partTargetDuration": 1,
+        "serverControl": {
+          "partHoldBack": 3,
+          "canBlockReload": true,
+          "holdBack": 30
+        },
+        "dateTimeString": "2024-03-01T12:00:00.000Z",
+        "dateTimeObject": "2024-03-01T12:00:00.000Z",
+        "discontinuitySequence": 0,
+        "preloadSegment": {
+          "discontinuity": true,
+          "parts": [
+            {
+              "duration": 1
+            },
+            {
+              "duration": 1
+            }
+          ],
+          "timeline": 1
+        }
+      }
+    },
+    {
+      "id": "10-second-tag-mid-timeline",
+      "title": "锚点后又写了一个新标签",
+      "note": "同一条钟上又来了一个标签：第二段起按 12:00:20.500 走，多出的 500 毫秒是单子上写的。",
+      "source": "playlists/10-second-tag-mid-timeline.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "dateTimeString": "2024-03-01T12:00:00.000Z",
+            "dateTimeObject": "2024-03-01T12:00:00.000Z",
+            "duration": 10,
+            "uri": "main-0950.ts",
+            "timeline": 0,
+            "programDateTime": 1709294400000
+          },
+          {
+            "dateTimeString": "2024-03-01T12:00:20.500Z",
+            "dateTimeObject": "2024-03-01T12:00:20.500Z",
+            "duration": 10,
+            "uri": "main-0951.ts",
+            "timeline": 0,
+            "programDateTime": 1709294420500
+          },
+          {
+            "duration": 10,
+            "uri": "main-0952.ts",
+            "timeline": 0,
+            "programDateTime": 1709294430500
+          }
+        ],
+        "version": 3,
+        "targetDuration": 10,
+        "mediaSequence": 950,
+        "dateTimeString": "2024-03-01T12:00:00.000Z",
+        "dateTimeObject": "2024-03-01T12:00:00.000Z",
+        "discontinuitySequence": 0,
+        "endList": true
+      }
+    },
+    {
+      "id": "11-late-tag",
+      "title": "标签来得晚 · 无切换",
+      "note": "标签在第三段，中间没有切换：前两段在同一条钟上倒推。",
+      "source": "playlists/11-late-tag.m3u8",
+      "manifest": {
+        "allowCache": true,
+        "discontinuityStarts": [],
+        "dateRanges": [],
+        "iFramePlaylists": [],
+        "segments": [
+          {
+            "duration": 10,
+            "uri": "main-1060.ts",
+            "timeline": 0,
+            "programDateTime": 1709294400000
+          },
+          {
+            "duration": 6,
+            "uri": "main-1061.ts",
+            "timeline": 0,
+            "programDateTime": 1709294410000
+          },
+          {
+            "dateTimeString": "2024-03-01T12:00:16.000Z",
+            "dateTimeObject": "2024-03-01T12:00:16.000Z",
+            "duration": 10,
+            "uri": "main-1062.ts",
+            "timeline": 0,
+            "programDateTime": 1709294416000
+          }
+        ],
+        "version": 3,
+        "targetDuration": 10,
+        "mediaSequence": 1060,
+        "discontinuitySequence": 0,
+        "dateTimeString": "2024-03-01T12:00:16.000Z",
+        "dateTimeObject": "2024-03-01T12:00:16.000Z",
+        "endList": true
+      }
+    }
+  ]
+}

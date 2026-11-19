@@ -910,6 +910,191 @@ QUnit.module('m3u8s', function(hooks) {
     assert.equal(segments[2].programDateTime, segments[1].programDateTime + segments[2].duration * 1000);
   });
 
+  QUnit.test('does not extrapolate PDT forward across a discontinuity', function(assert) {
+    this.parser.push([
+      '#EXTM3U',
+      '#EXT-X-TARGETDURATION:10',
+      '#EXT-X-MEDIA-SEQUENCE:0',
+      '#EXT-X-PROGRAM-DATE-TIME:2024-03-01T12:00:00.000Z',
+      '#EXTINF:10,',
+      'home-1.ts',
+      '#EXTINF:10,',
+      'home-2.ts',
+      '#EXT-X-DISCONTINUITY',
+      '#EXTINF:10,',
+      'away-1.ts',
+      '#EXTINF:5,',
+      'away-2.ts',
+      '#EXT-X-ENDLIST'
+    ].join('\n'));
+    this.parser.end();
+    const segments = this.parser.manifest.segments;
+
+    assert.equal(segments[0].programDateTime, new Date('2024-03-01T12:00:00.000Z').getTime());
+    assert.equal(segments[1].programDateTime, new Date('2024-03-01T12:00:10.000Z').getTime());
+    assert.strictEqual(segments[2].programDateTime, undefined, 'the clock stops at the discontinuity');
+    assert.strictEqual(segments[3].programDateTime, undefined, 'no new tag, no absolute time');
+  });
+
+  QUnit.test('does not backfill PDT across a discontinuity', function(assert) {
+    this.parser.push([
+      '#EXTM3U',
+      '#EXT-X-TARGETDURATION:10',
+      '#EXT-X-MEDIA-SEQUENCE:0',
+      '#EXTINF:10,',
+      'studio-1.ts',
+      '#EXTINF:6,',
+      'studio-2.ts',
+      '#EXT-X-DISCONTINUITY',
+      '#EXT-X-PROGRAM-DATE-TIME:2024-03-01T18:00:00.000Z',
+      '#EXTINF:10,',
+      'venue-1.ts',
+      '#EXTINF:4,',
+      'venue-2.ts',
+      '#EXT-X-ENDLIST'
+    ].join('\n'));
+    this.parser.end();
+    const segments = this.parser.manifest.segments;
+
+    assert.strictEqual(segments[0].programDateTime, undefined, 'pre-cut segment stays empty');
+    assert.strictEqual(segments[1].programDateTime, undefined, 'pre-cut segment stays empty');
+    assert.equal(segments[2].programDateTime, new Date('2024-03-01T18:00:00.000Z').getTime());
+    assert.equal(segments[3].programDateTime, new Date('2024-03-01T18:00:10.000Z').getTime());
+  });
+
+  QUnit.test('backfills PDT only within the timeline of the tag', function(assert) {
+    this.parser.push([
+      '#EXTM3U',
+      '#EXT-X-TARGETDURATION:10',
+      '#EXT-X-MEDIA-SEQUENCE:0',
+      '#EXTINF:10,',
+      'studio-1.ts',
+      '#EXT-X-DISCONTINUITY',
+      '#EXTINF:8,',
+      'venue-1.ts',
+      '#EXT-X-PROGRAM-DATE-TIME:2024-03-01T18:00:00.000Z',
+      '#EXTINF:10,',
+      'venue-2.ts',
+      '#EXTINF:4,',
+      'venue-3.ts',
+      '#EXT-X-ENDLIST'
+    ].join('\n'));
+    this.parser.end();
+    const segments = this.parser.manifest.segments;
+
+    assert.strictEqual(segments[0].programDateTime, undefined, 'pre-cut segment stays empty');
+    assert.equal(segments[1].programDateTime, new Date('2024-03-01T17:59:52.000Z').getTime(), 'same timeline as the tag: backfilled');
+    assert.equal(segments[2].programDateTime, new Date('2024-03-01T18:00:00.000Z').getTime());
+    assert.equal(segments[3].programDateTime, new Date('2024-03-01T18:00:10.000Z').getTime());
+  });
+
+  QUnit.test('PDT tag immediately before a discontinuity anchors the first segment after it', function(assert) {
+    this.parser.push([
+      '#EXTM3U',
+      '#EXT-X-TARGETDURATION:10',
+      '#EXT-X-MEDIA-SEQUENCE:0',
+      '#EXTINF:10,',
+      'studio-1.ts',
+      '#EXT-X-PROGRAM-DATE-TIME:2024-03-01T18:00:00.000Z',
+      '#EXT-X-DISCONTINUITY',
+      '#EXTINF:10,',
+      'venue-1.ts',
+      '#EXTINF:4,',
+      'venue-2.ts',
+      '#EXT-X-ENDLIST'
+    ].join('\n'));
+    this.parser.end();
+    const segments = this.parser.manifest.segments;
+
+    assert.strictEqual(segments[0].programDateTime, undefined, 'pre-cut segment stays empty');
+    assert.equal(segments[1].programDateTime, new Date('2024-03-01T18:00:00.000Z').getTime(), 'the tag belongs to the segment that follows it');
+    assert.equal(segments[2].programDateTime, new Date('2024-03-01T18:00:10.000Z').getTime());
+  });
+
+  QUnit.test('zero duration segments do not shift PDT by the player-facing duration', function(assert) {
+    this.parser.push([
+      '#EXTM3U',
+      '#EXT-X-TARGETDURATION:10',
+      '#EXT-X-MEDIA-SEQUENCE:0',
+      '#EXT-X-PROGRAM-DATE-TIME:2024-03-01T12:00:00.000Z',
+      '#EXTINF:10,',
+      'main-1.ts',
+      '#EXTINF:0,',
+      'filler.ts',
+      '#EXTINF:10,',
+      'main-2.ts',
+      '#EXT-X-ENDLIST'
+    ].join('\n'));
+    this.parser.end();
+    const segments = this.parser.manifest.segments;
+
+    assert.equal(segments[1].duration, 0.01, 'the player still gets 0.01s');
+    assert.equal(segments[1].playlistDuration, 0, 'the playlist wrote 0s');
+    assert.equal(segments[0].programDateTime, new Date('2024-03-01T12:00:00.000Z').getTime());
+    assert.equal(segments[1].programDateTime, new Date('2024-03-01T12:00:10.000Z').getTime());
+    assert.equal(segments[2].programDateTime, new Date('2024-03-01T12:00:10.000Z').getTime(), 'a 0s segment takes no time on the wall clock');
+  });
+
+  QUnit.test('backfill across a zero duration segment lands on the same instant', function(assert) {
+    this.parser.push([
+      '#EXTM3U',
+      '#EXT-X-TARGETDURATION:10',
+      '#EXT-X-MEDIA-SEQUENCE:0',
+      '#EXTINF:0,',
+      'filler.ts',
+      '#EXT-X-PROGRAM-DATE-TIME:2024-03-01T12:00:10.000Z',
+      '#EXTINF:10,',
+      'main-1.ts',
+      '#EXT-X-ENDLIST'
+    ].join('\n'));
+    this.parser.end();
+    const segments = this.parser.manifest.segments;
+
+    assert.equal(segments[0].duration, 0.01, 'the player still gets 0.01s');
+    assert.equal(segments[0].playlistDuration, 0, 'the playlist wrote 0s');
+    assert.equal(segments[0].programDateTime, new Date('2024-03-01T12:00:10.000Z').getTime(), 'a 0s segment starts when the next one starts');
+    assert.equal(segments[1].programDateTime, new Date('2024-03-01T12:00:10.000Z').getTime());
+  });
+
+  QUnit.test('assigns PDT to a trailing parts-only segment on the same timeline', function(assert) {
+    this.parser.push([
+      '#EXTM3U',
+      '#EXT-X-TARGETDURATION:4',
+      '#EXT-X-MEDIA-SEQUENCE:0',
+      '#EXT-X-PART-INF:PART-TARGET=1.0',
+      '#EXT-X-PROGRAM-DATE-TIME:2024-03-01T12:00:00.000Z',
+      '#EXTINF:4,',
+      'live-1.ts',
+      '#EXT-X-PART:DURATION=1.0',
+      '#EXT-X-PART:DURATION=1.0'
+    ].join('\n'));
+    this.parser.end();
+    const preloadSegment = this.parser.manifest.preloadSegment;
+
+    assert.ok(preloadSegment, 'there is a preload segment');
+    assert.equal(preloadSegment.programDateTime, new Date('2024-03-01T12:00:04.000Z').getTime(), 'same clock as the previous segment');
+  });
+
+  QUnit.test('leaves a trailing parts-only segment without PDT after a discontinuity', function(assert) {
+    this.parser.push([
+      '#EXTM3U',
+      '#EXT-X-TARGETDURATION:10',
+      '#EXT-X-MEDIA-SEQUENCE:0',
+      '#EXT-X-PART-INF:PART-TARGET=1.0',
+      '#EXT-X-PROGRAM-DATE-TIME:2024-03-01T12:00:00.000Z',
+      '#EXTINF:10,',
+      'home-1.ts',
+      '#EXT-X-DISCONTINUITY',
+      '#EXT-X-PART:DURATION=1.0',
+      '#EXT-X-PART:DURATION=1.0'
+    ].join('\n'));
+    this.parser.end();
+    const preloadSegment = this.parser.manifest.preloadSegment;
+
+    assert.ok(preloadSegment, 'there is a preload segment');
+    assert.strictEqual(preloadSegment.programDateTime, undefined, 'the signal was cut and no new tag has arrived');
+  });
+
   QUnit.test('warns when #EXT-X-DATERANGE missing attribute', function(assert) {
     this.parser.push([
       '#EXT-X-VERSION:3',

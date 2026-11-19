@@ -1,12 +1,25 @@
 <!doctype html>
-<html>
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <title>播控板</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>播控板 · 绝对时间墙</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>播控板</h1>
-  <div id="board"></div>
-  <script src="../dist/m3u8-parser.js"></script>
+  <header>
+    <h1>播控板 · 绝对时间墙</h1>
+    <p class="source">数据源：manifest.json（与播出服务器同一份清单，同一次解析生成）· 生成于 <span id="generated-at"></span></p>
+    <ul class="legend">
+      <li><span class="swatch swatch-anchor">⚓</span>这一段带着 EXT-X-PROGRAM-DATE-TIME 标签</li>
+      <li><span class="swatch swatch-cut">✂</span>EXT-X-DISCONTINUITY：前后是两条钟，绝对时间互不相干</li>
+      <li><span class="swatch swatch-preload"></span>虚线框：地址还没写出来（仅 EXT-X-PART）</li>
+      <li><span class="swatch swatch-filler"></span>细条：EXTINF 0 垫片（绝对时间按单子上的 0 秒走，播放器拿 0.01 秒）</li>
+      <li><span class="swatch swatch-blank"></span>时间留空：这条钟上没有锚点</li>
+    </ul>
+  </header>
+  <main id="wall"></main>
+  <script src="manifest.js"></script>
+  <script src="board.js"></script>
 </body>
 </html>

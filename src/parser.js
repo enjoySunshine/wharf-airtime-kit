@@ -126,6 +126,28 @@ export default class Parser extends Stream {
     // group segments into numbered timelines delineated by discontinuities
     let currentTimeline = 0;
 
+    // 段落参与绝对时间推算时使用的时长：播放列表写下的时长。
+    // EXTINF 写成 0 的垫片交给播放器的是 0.01 秒，但绝对时间按 0 秒走。
+    const playlistDurationOf = (segment) =>
+      typeof segment.playlistDuration === 'number' ? segment.playlistDuration : segment.duration;
+
+    // 锚段落位后，沿它所在的这条钟往前倒推：到切换标记为止，
+    // 也不覆盖已经有绝对时间的段。
+    const backfillProgramDateTime = (anchor) => {
+      let programDateTime = anchor.programDateTime;
+
+      for (let i = uris.length - 2; i >= 0; i--) {
+        const segment = uris[i];
+
+        if (segment.timeline !== anchor.timeline ||
+            typeof segment.programDateTime !== 'undefined') {
+          break;
+        }
+        segment.programDateTime = programDateTime - playlistDurationOf(segment) * 1000;
+        programDateTime = segment.programDateTime;
+      }
+    };
+
     // the manifest is empty until the parse stream begins delivering data
     this.manifest = {
       allowCache: true,
@@ -158,6 +180,23 @@ export default class Parser extends Stream {
 
       if (!currentUri.timeline && typeof currentTimeline === 'number') {
         currentUri.timeline = currentTimeline;
+      }
+
+      // 直播走到最后，地址还没写出来、只有 EXT-X-PART 的段：
+      // 和前一段同属一条钟时，必须带上自己的绝对时间；
+      // 刚切过信号、新锚点还没来时，留空。
+      if (currentUri.dateTimeObject) {
+        currentUri.programDateTime = currentUri.dateTimeObject.getTime();
+      } else {
+        const segments = this.manifest.segments;
+        const lastSegment = segments[segments.length - 1];
+
+        if (lastSegment &&
+            lastSegment.timeline === currentUri.timeline &&
+            typeof lastSegment.programDateTime !== 'undefined') {
+          currentUri.programDateTime =
+            lastSegment.programDateTime + playlistDurationOf(lastSegment) * 1000;
+        }
       }
 
       this.manifest.preloadSegment = currentUri;
@@ -302,6 +341,10 @@ export default class Parser extends Stream {
               }
 
               if (entry.duration === 0) {
+                // EXTINF 写成 0 的垫片：交给播放器的时长仍是 0.01 秒，
+                // 但播放列表写下的是 0 秒。绝对时间的推算只认播放列表
+                // 写下的时长（见 playlistDurationOf），两个数同时守住。
+                currentUri.playlistDuration = 0;
                 currentUri.duration = 0.01;
                 this.trigger('info', {
                   message: 'updating zero segment duration to a small value'
@@ -525,6 +568,11 @@ export default class Parser extends Stream {
               currentTimeline += 1;
               currentUri.discontinuity = true;
               this.manifest.discontinuityStarts.push(uris.length);
+              // 切换之后另起一条钟：没有新的绝对时间标签时，切换后的段
+              // 不再携带切换前推出来的绝对时间，切换前的钟停在切换前
+              // 最后一段。紧挨在切换标记前的标签仍属于切换后的第一段，
+              // 因为标签已经记在 currentUri 上。
+              this.lastProgramDateTime = null;
             },
             'program-date-time'() {
               if (typeof this.manifest.dateTimeString === 'undefined') {
@@ -538,21 +586,9 @@ export default class Parser extends Stream {
               currentUri.dateTimeString = entry.dateTimeString;
               currentUri.dateTimeObject = entry.dateTimeObject;
 
-              const { lastProgramDateTime } = this;
-
+              // 顺推与倒推都在段落落位（uri）时按段落所在的时间线处理：
+              // 同一条钟内才推算，不跨过切换标记。这里只把标签记到当前段上。
               this.lastProgramDateTime = new Date(entry.dateTimeString).getTime();
-
-              // We should extrapolate Program Date Time backward only during first program date time occurrence.
-              // Once we have at least one program date time point, we can always extrapolate it forward using lastProgramDateTime reference.
-              if (lastProgramDateTime === null) {
-                // Extrapolate Program Date Time backward
-                // Since it is first program date time occurrence we're assuming that
-                // all this.manifest.segments have no program date time info
-                this.manifest.segments.reduceRight((programDateTime, segment) => {
-                  segment.programDateTime = programDateTime - (segment.duration * 1000);
-                  return segment.programDateTime;
-                }, this.lastProgramDateTime);
-              }
             },
             targetduration() {
               if (!isFinite(entry.duration) || entry.duration < 0) {
@@ -938,10 +974,26 @@ export default class Parser extends Stream {
           // reset the last byterange end as it needs to be 0 between parts
           lastPartByterangeEnd = 0;
 
-          // Once we have at least one program date time we can always extrapolate it forward
-          if (this.lastProgramDateTime !== null) {
+          // 绝对时间：
+          // 1) 这一段自己带着 EXT-X-PROGRAM-DATE-TIME 标签时，用标签写下的
+          //    时刻（标签和段之间即使隔着 EXT-X-DISCONTINUITY 行，标签仍属于
+          //    这一段）；
+          // 2) 否则沿同一条钟顺推：上一段的绝对时间 + 上一段在播放列表里
+          //    写下的时长。切换标记之后钟已另起，没有新标签的段不带绝对时间。
+          if (currentUri.dateTimeObject) {
+            currentUri.programDateTime = currentUri.dateTimeObject.getTime();
+          } else if (this.lastProgramDateTime !== null) {
             currentUri.programDateTime = this.lastProgramDateTime;
-            this.lastProgramDateTime += currentUri.duration * 1000;
+          }
+
+          if (typeof currentUri.programDateTime !== 'undefined') {
+            if (currentUri.dateTimeObject) {
+              backfillProgramDateTime(currentUri);
+            }
+            this.lastProgramDateTime =
+              currentUri.programDateTime + playlistDurationOf(currentUri) * 1000;
+          } else {
+            this.lastProgramDateTime = null;
           }
 
           // prepare for the next URI
